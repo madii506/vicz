@@ -22,9 +22,6 @@ main{position:relative;z-index:2}
 /* ---------------------------------------------------------------- the intro: the sun comes up, the V drops in */
 #intro{position:fixed;inset:0;z-index:50;display:grid;place-items:center;background:linear-gradient(180deg,#1ac4e6 0%,#78d6f0 38%,#ffa0cd 62%,#ffcdaf 84%,#fff1e2 100%);transition:opacity .9s var(--ease),visibility .9s}
 #intro.done{opacity:0;visibility:hidden}
-.intro-mark{position:relative;width:min(240px,48vw);aspect-ratio:1;animation:markIn 1.3s var(--ease) both}
-.intro-mark img{width:100%;height:auto;position:relative;filter:drop-shadow(0 18px 40px rgba(42,11,77,.35))}
-.intro-mark .isun{position:absolute;inset:8%;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.9),rgba(255,255,255,0) 70%);animation:pulse 1.6s ease-in-out infinite}
 @keyframes markIn{0%{transform:translateY(40px) scale(.7);opacity:0}60%{opacity:1}100%{transform:none;opacity:1}}
 @keyframes pulse{50%{transform:scale(1.12);opacity:.6}}
 
@@ -276,14 +273,21 @@ body.atTop #radio,body.noRadio #radio,body.noworld #radio{opacity:0;transform:tr
 #radioL small{font:600 10px/1 JBM,monospace;color:var(--muted)}
 #radioL li.empty{display:block;cursor:default;background:none;color:var(--muted);font-weight:500;animation:none;padding:4px 6px}
 @keyframes rin{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
-/* the PLAY button on the title screen, the Drive button in the nav */
-.playbtn{position:absolute;left:50%;top:calc(100vh - 196px);transform:translateX(-50%);z-index:3;display:flex;align-items:center;gap:12px;padding:13px 30px 13px 22px;border:0;border-radius:999px;cursor:pointer;
-  background:linear-gradient(180deg,#fff 0%,#ffd6ec 46%,#ff4fa3 54%,#ff7ac0 100%);color:var(--ink);font:400 30px/1 Anton,sans-serif;letter-spacing:.06em;
-  box-shadow:0 0 0 3px var(--ink),5px 6px 0 3px var(--ink),0 0 40px rgba(255,79,163,.55);animation:pulse 2.4s ease-in-out infinite;transition:transform .2s var(--ease)}
-.playbtn:hover{transform:translateX(-50%) scale(1.05)}.playbtn:active{transform:translateX(-50%) scale(.97)}
-.playbtn i{width:0;height:0;border-left:18px solid var(--ink);border-top:11px solid transparent;border-bottom:11px solid transparent}
-.playbtn span{transform:skewX(-8deg)}
-@keyframes pulse{0%,100%{box-shadow:0 0 0 3px var(--ink),5px 6px 0 3px var(--ink),0 0 26px rgba(255,79,163,.4)}50%{box-shadow:0 0 0 3px var(--ink),5px 6px 0 3px var(--ink),0 0 54px rgba(255,79,163,.85)}}
+/* the title screen: the wordmark dead centre, Play and Connect under it */
+.hero-c{position:absolute;left:50%;top:50vh;transform:translate(-50%,-50%);z-index:3;display:flex;flex-direction:column;align-items:center;text-align:center;width:max-content;max-width:calc(100vw - 32px)}
+.hero-h{margin-left:-.08em;animation:heroIn 1.2s var(--ease) .35s both;filter:drop-shadow(0 18px 34px rgba(42,11,77,.32))}
+.hero-b{display:flex;justify-content:center;gap:14px;margin-top:clamp(18px,3.2vh,32px);animation:heroIn 1s var(--ease) .8s both}
+.hero-b .btn{min-width:176px}
+body.loading .hero-h,body.loading .hero-b{animation-play-state:paused}
+@keyframes heroIn{from{opacity:0;translate:0 22px;scale:.94}to{opacity:1;translate:0 0;scale:1}}
+.cdot{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--up);box-shadow:0 0 0 3px rgba(46,230,166,.25)}
+.wpick{position:absolute;top:calc(100% + 14px);left:50%;transform:translateX(-50%);min-width:280px;padding:10px;border-radius:18px;background:rgba(17,8,40,.9);border:1px solid var(--line);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);display:grid;gap:6px;text-align:left;color:#fff;box-shadow:0 18px 40px rgba(10,4,30,.4)}
+.wpick[hidden]{display:none}
+.wpick button{display:flex;align-items:center;gap:10px;width:100%;padding:11px 12px;border-radius:12px;border:0;background:rgba(255,255,255,.07);color:#fff;font:700 14px/1 Inter,sans-serif;cursor:pointer;text-align:left}
+.wpick button:hover{background:rgba(255,255,255,.15)}
+.wpick img{width:24px;height:24px;border-radius:7px}
+.wpick p{margin:4px 6px 6px;color:var(--muted);font-size:13px;line-height:1.5}
+.wpick a{color:#ff9ec9}
 .btn.drive{margin-right:8px}
 /* free roam */
 body.playing{overflow:hidden}
@@ -334,13 +338,22 @@ body.playing .card{bottom:auto;top:68px;left:16px}
   #radar{top:54px;right:10px;width:104px;height:104px}.speedo{top:54px;left:14px}
   #hudPick{top:168px}#hudPick .pk{min-width:0;width:calc(100vw - 28px)}
 }
+.legend{list-style:none;margin:14px 0 16px;padding:0;display:grid;gap:8px}
+.legend li{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;line-height:1.45;opacity:.86}
+.legend i{flex:none;width:12px;height:12px;margin-top:3px;border-radius:4px}
+.legend i.g{background:var(--up)}.legend i.r{background:var(--dn)}.legend i.y{background:#ffd23f}.legend i.h{background:linear-gradient(135deg,#ff2a8f,#14d6ea)}
+.how{list-style:none;counter-reset:h;margin:14px 0 16px;padding:0;display:grid;gap:10px}
+.how li{counter-increment:h;display:grid;grid-template-columns:28px 1fr;gap:12px;align-items:center;font-size:13.5px;line-height:1.45;opacity:.9}
+.how li::before{content:counter(h);width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:rgba(255,79,163,.2);border:1px solid rgba(255,79,163,.5);color:#ff9ec9;font:800 12px/1 JBM,monospace}
+.cta{display:flex;align-items:center;gap:12px;margin:16px 0 4px;flex-wrap:wrap}
+.cta span{font-size:13px;opacity:.75}
 #toasts{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:60;display:grid;gap:8px}
 .toast{padding:11px 16px;border-radius:14px;background:rgba(17,8,40,.92);border:1px solid rgba(255,255,255,.16);font-weight:700;font-size:13px;color:#fff}
 .toast.ok{border-color:rgba(46,230,166,.5)}.toast.err{border-color:rgba(255,79,158,.6)}
 
 /* ---------------------------------------------------------------- phones: the world on top, the panel underneath */
 @media (max-width:900px){
-  .playbtn{top:calc(100svh - 178px);font-size:26px;padding:12px 26px 12px 20px}
+  .hero-c{top:47svh}.hero-b{gap:10px}.hero-b .btn{min-width:146px}
   .btn.drive{display:none}
   #radio{left:12px;right:12px;bottom:auto;top:62px;width:auto;padding:5px 6px;border-radius:14px}
   #radio header{display:none}

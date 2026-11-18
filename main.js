@@ -1,5 +1,5 @@
 // VICZ · the page: live pump.fun data in, the world and the panels out. Scrolling digs the camera down through the trenches.
-import { createWorld } from './world.js?v=6';
+import { createWorld } from './world.js?v=7';
 import * as api from './api.js';
 import { CONFIG, $, $$, esc, short, usd, pct, cls, img, ago, toast, copy, sol, solscan, on, store } from './core.js';
 import * as wallet from './wallet.js';
@@ -314,7 +314,7 @@ function onCollect(c, n) {
   el.innerHTML = `<div class="pk" data-m="${esc(c.mint)}">${av(c)}<div><em>COIN ${n} · LIVE</em><b>$${esc(c.symbol)}</b><small>${esc((c.name || '').slice(0, 28))}</small></div><span class="v ${cls(c.chg)}">${pct(c.chg)}<small>5m · ${usd(c.mcap)}</small></span></div>`;
   el.classList.remove('show'); void el.offsetWidth; el.classList.add('show'); clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('show'), 4500);
 }
-$('#playBtn').addEventListener('click', startPlay); $('#navPlay').addEventListener('click', startPlay);
+$('#playBtn').addEventListener('click', startPlay); $('#navPlay').addEventListener('click', startPlay); $$('[data-play]').forEach(b => b.addEventListener('click', startPlay));
 $('#hudExit').addEventListener('click', stopPlay);
 const TOD = t => t < .3 ? '☀ DAY' : t < .6 ? '◐ SUNSET' : t < .9 ? '☾ DUSK' : '★ NIGHT';
 $('#hudTime').addEventListener('click', () => { if (world) $('#hudTime').textContent = TOD(world.playTime()); });
@@ -331,8 +331,35 @@ addEventListener('keydown', e => { if (e.key === 'Escape' && playing) stopPlay()
     b.addEventListener('pointerdown', e => { e.preventDefault(); if (world) world.playInput({ [k]: true }); }); b.addEventListener('pointerup', off); b.addEventListener('pointercancel', off); b.addEventListener('pointerleave', off); }
 }
 
+
+// ---------------------------------------------------------------- the title screen's Connect: pick a wallet, then it shows your address
+const connBtn = $('#connBtn'), wpick = $('#wpick');
+function paintConn() { if (connBtn) connBtn.innerHTML = wallet.W.address ? `<i class="cdot"></i>${short(wallet.W.address)}` : 'Connect'; }
+function openPick() {
+  if (wallet.W.address) wpick.innerHTML = `<p>Connected as <b>${short(wallet.W.address)}</b></p><button data-x="fallen">Bring your fallen home →</button><button data-x="out">Disconnect</button>`;
+  else { const ws = wallet.W.list;
+    wpick.innerHTML = ws.length ? `<p>Pick your Solana wallet</p>` + ws.map(w => `<button data-w="${esc(w.name)}">${w.icon ? `<img src="${esc(w.icon)}" alt="">` : ''}${esc(w.name)}</button>`).join('')
+      : `<p>No Solana wallet found in this browser. Get <a href="https://phantom.com" target="_blank" rel="noopener">Phantom</a>, <a href="https://solflare.com" target="_blank" rel="noopener">Solflare</a> or <a href="https://backpack.app" target="_blank" rel="noopener">Backpack</a>, then come back.</p>`; }
+  wpick.hidden = false;
+}
+async function doConnect(name) {
+  connBtn.disabled = true;
+  try { await wallet.connect(name); wpick.hidden = true; } catch (er) { toast(esc(er.message || String(er)), 'err', 4000); }
+  connBtn.disabled = false; paintConn();
+}
+connBtn.addEventListener('click', e => { e.stopPropagation(); if (!wpick.hidden) { wpick.hidden = true; return; } if (!wallet.W.address && wallet.W.list.length === 1) { doConnect(wallet.W.list[0].name); return; } openPick(); });
+wpick.addEventListener('click', async e => {
+  e.stopPropagation(); const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.w) { doConnect(b.dataset.w); return; }
+  if (b.dataset.x === 'out') { await wallet.disconnect(); FT.scan = null; FT.res = null; FT.stage = 'idle'; if (world) world.setFallen(0); renderTool(); wpick.hidden = true; }
+  if (b.dataset.x === 'fallen') { wpick.hidden = true; $('#fallen').scrollIntoView({ behavior: 'smooth' }); }
+  paintConn();
+});
+document.addEventListener('click', () => { if (wpick) wpick.hidden = true; });
+on('wallet', paintConn); on('wallets', () => { if (wpick && !wpick.hidden && !wallet.W.address) openPick(); });
+
 // ---------------------------------------------------------------- boot
-paintCA(); renderTool(); onScroll();
+paintCA(); renderTool(); paintConn(); onScroll();
 setTimeout(() => wallet.restore(), 600);
 if (world && fNow < .2) world.hold();
 const hide = () => { $('#intro').classList.add('done'); document.body.classList.remove('loading'); if (world) setTimeout(() => world.intro(), 150); };
