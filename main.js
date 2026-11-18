@@ -1,5 +1,5 @@
 // VICZ · the page: live pump.fun data in, the world and the panels out. Scrolling digs the camera down through the trenches.
-import { createWorld } from './world.js?v=4';
+import { createWorld } from './world.js?v=5';
 import * as api from './api.js';
 import { CONFIG, $, $$, esc, short, usd, pct, cls, img, ago, toast, copy, sol, solscan, on, store } from './core.js';
 import * as wallet from './wallet.js';
