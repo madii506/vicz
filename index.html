@@ -21,7 +21,7 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=1">
 <link rel="preload" href="/anton.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/inter.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/vicz.css?v=3">
+<link rel="stylesheet" href="/vicz.css?v=4">
 </head>
 <body>
 <canvas id="world" aria-label="The VICZ trenches, live"></canvas>
@@ -36,7 +36,7 @@
   <nav class="links" aria-label="Sections">
     <a href="#line" data-st="2">The line</a><a href="#over" data-st="3">Over the top</a><a href="#barracks" data-st="4">Barracks</a><a href="#room" data-st="5">War room</a><a href="#fallen" data-st="6">The fallen</a><a href="#hq" data-st="7">HQ</a>
   </nav>
-  <div class="right"><a class="xbtn" id="navX" href="#hq" aria-label="VICZ on X">𝕏</a><a class="btn sm pri" href="#fallen">Bring your fallen home</a></div>
+  <div class="right"><button class="btn sm drive" id="navPlay" type="button">▶ Drive</button><a class="xbtn" id="navX" href="#hq" aria-label="VICZ on X">𝕏</a><a class="btn sm pri" href="#fallen">Bring your fallen home</a></div>
 </header>
 
 <aside id="depth" aria-hidden="true">
@@ -52,6 +52,7 @@
   <!-- 0 · the sky over Vice -->
   <section class="sec hero" id="top" data-st="0" aria-label="VICZ: the first in-game trenches for memecoins">
     <h1 class="sr">VICZ: the first in-game trenches for memecoins</h1>
+    <button class="playbtn" id="playBtn" type="button" aria-label="Play: drive the city"><i></i><span>PLAY</span></button>
     <a class="cue" href="#war" aria-label="Scroll into the trenches"><i></i></a>
     <div class="tape" aria-label="Coins on the line right now"><div class="tape-in" id="tape"></div></div>
   </section>
@@ -157,8 +158,16 @@
   <header><i class="rdot"></i><b>FIELD RADIO</b><span id="radioClock">LIVE</span></header>
   <ol id="radioL"><li class="empty">Listening on the pump.fun channels…</li></ol>
 </aside>
+<div id="hud" hidden>
+  <div class="hud-top"><span class="hud-tag"><i></i>FREE ROAM</span><span class="hud-coins" id="hudCoins">0 COINS</span><span class="sp"></span><button class="hud-b" id="hudTime" type="button" aria-label="Change the time of day">☾ DUSK</button><button class="hud-b x" id="hudExit" type="button">EXIT ✕</button></div>
+  <canvas id="radar" width="220" height="220" aria-hidden="true"></canvas>
+  <div class="speedo" aria-hidden="true"><b id="hudMph">0</b><small>MPH</small><span class="bst"><i id="hudBoost"></i></span></div>
+  <p class="hud-hint" id="hudHint"><b>W A S D</b> drive · <b>SHIFT</b> boost · <b>SPACE</b> drift · <b>T</b> time · <b>ESC</b> exit<br><span>Drive through the floating coins to read them live.</span></p>
+  <div id="hudPick" aria-live="polite"></div>
+  <div class="touch" id="touch"><div class="stick" id="stick"><i></i></div><div class="tbtns"><button id="tDrift" type="button">DRIFT</button><button id="tBoost" type="button">BOOST</button></div></div>
+</div>
 <div id="card" class="card" hidden></div>
 <div id="toasts" aria-live="polite"></div>
-<script type="module" src="/main.js?v=5"></script>
+<script type="module" src="/main.js?v=6"></script>
 </body>
 </html>

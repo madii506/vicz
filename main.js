@@ -1,5 +1,5 @@
 // VICZ · the page: live pump.fun data in, the world and the panels out. Scrolling digs the camera down through the trenches.
-import { createWorld } from './world.js?v=5';
+import { createWorld } from './world.js?v=6';
 import * as api from './api.js';
 import { CONFIG, $, $$, esc, short, usd, pct, cls, img, ago, toast, copy, sol, solscan, on, store } from './core.js';
 import * as wallet from './wallet.js';
@@ -7,7 +7,7 @@ import * as fallen from './fallen.js';
 
 const mobile = matchMedia('(pointer:coarse)').matches || innerWidth < 760;
 let world = null;
-try { world = createWorld($('#world'), { onPick: openCard }); } catch (e) { console.error(e); document.body.classList.add('noworld'); }
+try { world = createWorld($('#world'), { onPick: openCard, onCollect }); } catch (e) { console.error(e); document.body.classList.add('noworld'); }
 
 // ---------------------------------------------------------------- the scroll: each section holds its station, the gaps between are the camera moves
 const secs = $$('.sec'), N = secs.length, STY = [24, 11, 2.4, 8.5, -13, -28.6, -46, -65];
@@ -292,6 +292,45 @@ async function runFallen() {
 on('wallets', () => { if (!wallet.W.address) renderTool(); });
 on('wallet', () => renderTool());
 
+
+// ---------------------------------------------------------------- free roam: drive the city, read the live coins you drive through
+let playing = false, playRaf = 0, playT0 = 0;
+function startPlay() {
+  if (!world || playing) return; playing = true; if (document.activeElement) document.activeElement.blur();
+  document.body.classList.add('playing'); const h = $('#hud'); h.hidden = false; h.classList.remove('quiet'); playT0 = Date.now();
+  world.play(true, $('#radar')); $('#hudTime').textContent = TOD(world.playState().tod); hudLoop();
+}
+function stopPlay() {
+  if (!playing) return; playing = false; document.body.classList.remove('playing'); $('#hud').hidden = true; world.play(false); cancelAnimationFrame(playRaf); onScroll();
+}
+function hudLoop() {
+  playRaf = requestAnimationFrame(hudLoop); const s = world.playState();
+  const mph = $('#hudMph'); if (mph.textContent !== String(s.mph)) mph.textContent = s.mph;
+  $('#hudBoost').style.width = Math.round(s.boost * 100) + '%'; const cc = s.coins + (s.coins === 1 ? ' COIN' : ' COINS'); if ($('#hudCoins').textContent !== cc) $('#hudCoins').textContent = cc;
+  if (Date.now() - playT0 > 9000) $('#hud').classList.add('quiet');
+}
+function onCollect(c, n) {
+  const el = $('#hudPick'); if (!el) return;
+  el.innerHTML = `<div class="pk" data-m="${esc(c.mint)}">${av(c)}<div><em>COIN ${n} · LIVE</em><b>$${esc(c.symbol)}</b><small>${esc((c.name || '').slice(0, 28))}</small></div><span class="v ${cls(c.chg)}">${pct(c.chg)}<small>5m · ${usd(c.mcap)}</small></span></div>`;
+  el.classList.remove('show'); void el.offsetWidth; el.classList.add('show'); clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('show'), 4500);
+}
+$('#playBtn').addEventListener('click', startPlay); $('#navPlay').addEventListener('click', startPlay);
+$('#hudExit').addEventListener('click', stopPlay);
+const TOD = t => t < .3 ? '☀ DAY' : t < .6 ? '◐ SUNSET' : t < .9 ? '☾ DUSK' : '★ NIGHT';
+$('#hudTime').addEventListener('click', () => { if (world) $('#hudTime').textContent = TOD(world.playTime()); });
+addEventListener('keyup', e => { if (playing && e.key.toLowerCase() === 't') $('#hudTime').textContent = TOD(world.playState().tod); });
+addEventListener('keydown', e => { if (e.key === 'Escape' && playing) stopPlay(); });
+{ // the thumb stick and the two buttons on touch screens
+  const stick = $('#stick'), knob = stick.firstElementChild; let sid = null, cx = 0, cy = 0;
+  const move = e => { const R0 = 46; let dx = e.clientX - cx, dy = e.clientY - cy; const d = Math.hypot(dx, dy); if (d > R0) { dx *= R0 / d; dy *= R0 / d; } knob.style.transform = `translate(${dx}px,${dy}px)`; if (world) world.playInput({ ax: dx / R0, ay: -dy / R0 }); };
+  stick.addEventListener('pointerdown', e => { sid = e.pointerId; stick.setPointerCapture(sid); const r = stick.getBoundingClientRect(); cx = r.left + r.width / 2; cy = r.top + r.height / 2; move(e); });
+  stick.addEventListener('pointermove', e => { if (e.pointerId === sid) move(e); });
+  const end = e => { if (e.pointerId !== sid) return; sid = null; knob.style.transform = ''; if (world) world.playInput({ ax: 0, ay: 0 }); };
+  stick.addEventListener('pointerup', end); stick.addEventListener('pointercancel', end);
+  for (const [id, k] of [['tBoost', 'tboost'], ['tDrift', 'tdrift']]) { const b = $('#' + id), off = () => world && world.playInput({ [k]: false });
+    b.addEventListener('pointerdown', e => { e.preventDefault(); if (world) world.playInput({ [k]: true }); }); b.addEventListener('pointerup', off); b.addEventListener('pointercancel', off); b.addEventListener('pointerleave', off); }
+}
+
 // ---------------------------------------------------------------- boot
 paintCA(); renderTool(); onScroll();
 setTimeout(() => wallet.restore(), 600);
@@ -301,4 +340,4 @@ document.body.classList.add('loading');
 Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 1800))]).then(() => setTimeout(hide, 900));
 loadGems(); loadTrending(); loadWhales(); pumpStream();
 setInterval(loadGems, 25000); setInterval(loadTrending, 20000); setInterval(loadWhales, 60000); setInterval(() => { paintHero(); paintStream(); }, 5000);
-window.__vicz = { world, F };
+window.__vicz = { world, F, startPlay, stopPlay };
