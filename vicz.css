@@ -275,7 +275,12 @@ body.atTop #radio,body.noRadio #radio,body.noworld #radio{opacity:0;transform:tr
 @keyframes rin{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
 /* the title screen: the wordmark dead centre, Play and Connect under it */
 .hero-c{position:absolute;left:50%;top:50vh;transform:translate(-50%,-50%);z-index:3;display:flex;flex-direction:column;align-items:center;text-align:center;width:max-content;max-width:calc(100vw - 32px)}
-.hero-h{margin-left:-.08em;animation:heroIn 1.2s var(--ease) .35s both;filter:drop-shadow(0 18px 34px rgba(42,11,77,.32))}
+.hero-h{font-size:clamp(70px,10.5vw,148px);margin-left:-.08em;animation:heroIn 1.2s var(--ease) .35s both,flick 4.2s linear 1.7s infinite;filter:drop-shadow(0 0 16px rgba(255,79,163,.5)) drop-shadow(0 14px 28px rgba(42,11,77,.3))}
+@keyframes flick{0%,6%,8.5%,10%,47%,49%,51%,72%,100%{opacity:1;filter:drop-shadow(0 0 16px rgba(255,79,163,.5)) drop-shadow(0 14px 28px rgba(42,11,77,.3)) brightness(1)}
+  7%,9.5%{opacity:.42;filter:drop-shadow(0 0 0 rgba(255,79,163,0)) drop-shadow(0 14px 28px rgba(42,11,77,.2)) brightness(.7)}
+  48%{opacity:.7;filter:drop-shadow(0 0 4px rgba(255,79,163,.2)) drop-shadow(0 14px 28px rgba(42,11,77,.25)) brightness(.85)}
+  50%{opacity:.35;filter:drop-shadow(0 0 0 rgba(255,79,163,0)) drop-shadow(0 14px 28px rgba(42,11,77,.2)) brightness(.65)}
+  60%{opacity:1;filter:drop-shadow(0 0 26px rgba(255,79,163,.75)) drop-shadow(0 14px 28px rgba(42,11,77,.3)) brightness(1.08)}}
 .hero-b{display:flex;justify-content:center;gap:14px;margin-top:clamp(18px,3.2vh,32px);animation:heroIn 1s var(--ease) .8s both}
 .hero-b .btn{min-width:176px}
 body.loading .hero-h,body.loading .hero-b{animation-play-state:paused}
@@ -354,6 +359,7 @@ body.playing .card{bottom:auto;top:68px;left:16px}
 /* ---------------------------------------------------------------- phones: the world on top, the panel underneath */
 @media (max-width:900px){
   .hero-c{top:47svh}.hero-b{gap:10px}.hero-b .btn{min-width:146px}
+  .hero-h{font-size:clamp(60px,19vw,96px)}
   .btn.drive{display:none}
   #radio{left:12px;right:12px;bottom:auto;top:62px;width:auto;padding:5px 6px;border-radius:14px}
   #radio header{display:none}
@@ -377,5 +383,6 @@ body.playing .card{bottom:auto;top:68px;left:16px}
   .card{left:12px;right:12px;bottom:12px;width:auto}
 }
 @media (prefers-reduced-motion:reduce){
+  .hero-h,.hero-b{animation:none}
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
 }
