@@ -254,12 +254,38 @@ body.night .dtrack{background:rgba(255,255,255,.15)}
 .card .acts{display:flex;gap:6px;flex-wrap:wrap}
 .card .acts a,.card .acts button{flex:1;min-height:40px;border-radius:12px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;font-weight:800;font-size:12.5px;text-decoration:none;display:grid;place-items:center}
 
+#radio{position:fixed;right:20px;bottom:20px;z-index:16;width:min(372px,calc(100vw - 40px));padding:10px 10px 9px;border-radius:18px;background:rgba(17,8,40,.8);border:1px solid var(--line);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:#fff;font:600 12px/1.25 Inter,sans-serif;box-shadow:0 12px 34px rgba(10,4,30,.38);transition:opacity .6s var(--ease),transform .6s var(--ease),border-color .5s}
+body.atTop #radio,body.noRadio #radio,body.noworld #radio{opacity:0;transform:translateY(18px);pointer-events:none}
+#radio header{display:flex;align-items:center;gap:8px;margin:0 4px 8px;font:700 10px/1 JBM,monospace;letter-spacing:.14em;color:var(--muted)}
+#radio header b{color:#fff;font-weight:800}
+#radio header span{margin-left:auto;letter-spacing:.06em}
+#radio .rdot{width:8px;height:8px;border-radius:50%;background:#ff3d6e;animation:rec 1.6s infinite}
+@keyframes rec{0%{box-shadow:0 0 0 0 rgba(255,61,110,.6)}70%{box-shadow:0 0 0 8px rgba(255,61,110,0)}100%{box-shadow:0 0 0 0 rgba(255,61,110,0)}}
+#radio.ping{animation:ping .9s var(--ease)}
+@keyframes ping{0%{border-color:rgba(34,228,255,.9);box-shadow:0 0 0 3px rgba(34,228,255,.25),0 12px 34px rgba(10,4,30,.38)}100%{border-color:var(--line)}}
+#radioL{list-style:none;margin:0;padding:0;display:grid;gap:5px}
+#radioL li{display:grid;grid-template-columns:auto 22px minmax(0,1fr) auto;align-items:center;gap:8px;padding:6px 8px;border-radius:11px;background:rgba(255,255,255,.055);cursor:pointer;animation:rin .5s var(--ease)}
+#radioL li:hover{background:rgba(255,255,255,.11)}
+#radioL li:nth-child(2){opacity:.74}#radioL li:nth-child(3){opacity:.5}
+#radioL em{font:800 9px/1 JBM,monospace;letter-spacing:.07em;font-style:normal;padding:4px 6px;border-radius:6px;white-space:nowrap}
+#radioL .r-y em{color:#ffd23f;background:rgba(255,210,63,.15)}#radioL .r-c em{color:#5fe0ff;background:rgba(95,224,255,.15)}#radioL .r-p em{color:#ff8fd0;background:rgba(255,79,163,.18)}
+#radioL .r-g em{color:var(--up);background:rgba(46,230,166,.15)}#radioL .r-r em{color:var(--dn);background:rgba(255,79,158,.16)}
+#radioL .av{width:22px;height:22px;border-radius:50%;object-fit:cover;background:#2a1a4a;font-size:9px}
+#radioL .tx{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500;color:rgba(255,255,255,.9)}
+#radioL .tx b{font-weight:800;color:#fff}#radioL .tx b.g{color:var(--up)}#radioL .tx b.r{color:var(--dn)}
+#radioL small{font:600 10px/1 JBM,monospace;color:var(--muted)}
+#radioL li.empty{display:block;cursor:default;background:none;color:var(--muted);font-weight:500;animation:none;padding:4px 6px}
+@keyframes rin{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
 #toasts{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:60;display:grid;gap:8px}
 .toast{padding:11px 16px;border-radius:14px;background:rgba(17,8,40,.92);border:1px solid rgba(255,255,255,.16);font-weight:700;font-size:13px;color:#fff}
 .toast.ok{border-color:rgba(46,230,166,.5)}.toast.err{border-color:rgba(255,79,158,.6)}
 
 /* ---------------------------------------------------------------- phones: the world on top, the panel underneath */
 @media (max-width:900px){
+  #radio{left:12px;right:12px;bottom:auto;top:62px;width:auto;padding:5px 6px;border-radius:14px}
+  #radio header{display:none}
+  #radioL li:nth-child(n+2){display:none}
+  #radioL li{padding:4px 6px}
   #depth{display:none}
   .links{display:none}
   #nav{grid-template-columns:1fr auto;top:10px;padding:0 12px}

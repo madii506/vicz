@@ -1,5 +1,5 @@
 // VICZ · the page: live pump.fun data in, the world and the panels out. Scrolling digs the camera down through the trenches.
-import { createWorld } from './world.js?v=3';
+import { createWorld } from './world.js?v=4';
 import * as api from './api.js';
 import { CONFIG, $, $$, esc, short, usd, pct, cls, img, ago, toast, copy, sol, solscan, on, store } from './core.js';
 import * as wallet from './wallet.js';
@@ -24,7 +24,7 @@ function stationFromScroll() {
 const navA = $$('.links a'), depthLi = $$('#depth li');
 function onScroll() {
   const f = stationFromScroll(); fNow = f; if (world) world.setF(f);
-  document.body.classList.toggle('night', f > .8); document.body.classList.toggle('atTop', f < .45);
+  document.body.classList.toggle('night', f > .8); document.body.classList.toggle('atTop', f < .45); document.body.classList.toggle('noRadio', !mobile && f > 5.45 && f < 6.55);
   const k = f / (N - 1); $('.dfill').style.height = k * 100 + '%'; $('.dknob').style.top = k * 100 + '%';
   const i = Math.floor(f), e = f - i, d = STY[i] + (STY[Math.min(N - 1, i + 1)] - STY[i]) * e; $('#depthNow').textContent = (d > 0 ? '+' : '') + Math.round(d);
   const cur = Math.round(f); navA.forEach(a => a.classList.toggle('on', +a.dataset.st === cur)); depthLi.forEach(l => l.classList.toggle('on', +l.dataset.st <= f + .5));
@@ -66,6 +66,9 @@ async function loadTrending() {
   if (h.status === 'fulfilled') { const L = (h.value || []).filter(isPump).filter(t => !BAD.test(t.symbol + ' ' + t.name)), hm = Math.max(1, ...L.map(heatOf)); F.hot = L.slice(0, 36).map(t => shape(t, 'hot', hm)); live.hot = Date.now(); }
   if (t.status === 'fulfilled') { const L = (t.value || []).filter(isPump).filter(t => !BAD.test(t.symbol + ' ' + t.name)), hm = Math.max(1, ...L.map(heatOf)); F.trending = L.slice(0, 30).map(t => shape(t, 'trending', hm)); }
   paintAll();
+  for (const c of F.hot.slice(0, 24)) { if (c.chg == null) continue;
+    if (c.chg >= 30) radio('pump', c, `<b>$${esc(c.symbol)}</b> broke through · <b class="g">${pct(c.chg)}</b> in 5m`);
+    else if (c.chg <= -25) radio('dump', c, `<b>$${esc(c.symbol)}</b> is under fire · <b class="r">${pct(c.chg)}</b> in 5m`); }
   if (h.status === 'fulfilled' && t.status === 'fulfilled') trendRetry = 0; else if (trendRetry < 6) { trendRetry++; setTimeout(loadTrending, 3000 + trendRetry * 2500); }
 }
 // the whales in the choppers: two public pump.fun traders, their SOL and latest trades
@@ -92,7 +95,7 @@ async function loadWhales() {
 function onWhaleTrade(d) {
   const w = PW.find(x => x.a === d.traderPublicKey); if (!w || w.trades.some(x => x.sig === d.signature)) return;
   const v = symOf(d.mint); w.trades.unshift({ sig: d.signature, t: Date.now(), mint: d.mint, side: d.txType, sol: +d.solAmount || 0, sym: v.symbol, iconUrl: v.iconUrl }); w.trades.length = Math.min(w.trades.length, 8);
-  paintWhales(); toast(`<b>${esc(w.n)}</b> ${d.txType === 'buy' ? 'bought' : 'sold'} $${esc(v.symbol)} · ${(+d.solAmount || 0).toFixed(1)} SOL`, d.txType === 'buy' ? 'ok' : 'err', 4000);
+  paintWhales(); radio('whale', { mint: d.mint, symbol: v.symbol, iconUrl: v.iconUrl }, `<b>${esc(w.n)}</b> ${d.txType === 'buy' ? 'bought' : 'sold'} <b>$${esc(v.symbol)}</b> · ${(+d.solAmount || 0).toFixed(1)} SOL`, 'w' + d.signature);
 }
 // every new pump.fun coin and every migration the second it happens
 function pumpStream() {
@@ -115,7 +118,7 @@ function onLaunch(d) {
   const t = { mint: d.mint, name: d.name || '', symbol: String(d.symbol).slice(0, 14), created: Date.now(), iconUrl: icon, cat: 'new', isNew: true, chg: null, s5m: {}, s1h: {} };
   launches.unshift(t); if (launches.length > 40) launches.pop(); launchTs.push(Date.now()); if (launchTs.length > 600) launchTs.splice(0, 300);
   if (world) world.recruit(t);
-  addStream(t); paintHero();
+  addStream(t); paintHero(); radio('recruit', t, `<b>$${esc(t.symbol)}</b> enlisted${t.name ? ' · ' + esc(t.name.slice(0, 22)) : ''}`);
 }
 async function onMigrate(d) {
   let c = findCoin(d.mint);
@@ -123,9 +126,36 @@ async function onMigrate(d) {
   if (!c) return; c = { ...c, cat: 'migrated', isNew: false, grad: Date.now() };
   F.migrated = [c, ...F.migrated.filter(x => x.mint !== c.mint)].slice(0, 24);
   if (world) world.graduate(c, true);
-  toast(`<b>$${esc(c.symbol)}</b> graduated · going over the top`, 'ok', 4500); paintAll();
+  radio('over', c, `<b>$${esc(c.symbol)}</b> went over the top · into PumpSwap`); paintAll();
 }
 const perMin = () => { if (!streamSince) return null; const sec = Math.min(60, (Date.now() - streamSince) / 1000); return sec < 15 ? null : Math.round(launchTs.filter(t => t > Date.now() - sec * 1000).length / sec * 60); };
+
+
+// ---------------------------------------------------------------- the field radio: every real event on the front, one dispatch at a time
+const RADIO = { q: [], seen: new Map() }, RTAG = { recruit: ['RECRUIT', 'y'], over: ['OVER THE TOP', 'c'], whale: ['WHALE', 'p'], pump: ['BREAKTHROUGH', 'g'], dump: ['UNDER FIRE', 'r'] };
+function radio(kind, c, html, key) {
+  if (!c || !c.mint) return; const now = Date.now(); key = key || kind + c.mint;
+  if (now - (RADIO.seen.get(key) || 0) < 300000) return; RADIO.seen.set(key, now);
+  const ev = { kind, c, html };
+  if (kind === 'recruit') { if (RADIO.q.length) return; RADIO.q.push(ev); } else if (kind === 'whale' || kind === 'over') RADIO.q.unshift(ev); else RADIO.q.push(ev);
+  if (RADIO.q.length > 6) RADIO.q.length = 6;
+  if (!RADIO.on) radioTick();
+}
+function typeIn(el, html) {
+  const tmp = document.createElement('span'); tmp.innerHTML = html; const txt = tmp.textContent; let i = 0;
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) { el.innerHTML = html; return; }
+  const tick = () => { i += 2; if (i >= txt.length) { el.innerHTML = html; return; } el.textContent = txt.slice(0, i) + '▌'; setTimeout(tick, 24); }; tick();
+}
+function radioTick() {
+  if (document.hidden) return; const ev = RADIO.q.shift(); if (!ev) return;
+  RADIO.on = true; clearTimeout(RADIO.t); RADIO.t = setTimeout(() => { RADIO.on = false; if (RADIO.q.length) radioTick(); }, 3400);
+  const ol = $('#radioL'); if (!ol) return; const em = ol.querySelector('.empty'); if (em) em.remove();
+  const [tag, tone] = RTAG[ev.kind], li = document.createElement('li'); li.className = 'r-' + tone; li.dataset.m = ev.c.mint; li.dataset.t = Date.now();
+  li.innerHTML = `<em>${tag}</em>${av(ev.c)}<span class="tx"></span><small>now</small>`; ol.prepend(li); while (ol.children.length > 3) ol.lastElementChild.remove();
+  typeIn(li.querySelector('.tx'), ev.html);
+  const r = $('#radio'); r.classList.remove('ping'); void r.offsetWidth; r.classList.add('ping');
+}
+setInterval(() => { const n = $('#radioClock'); if (n) n.textContent = new Date().toLocaleTimeString('en-GB'); $$('#radioL li[data-t]').forEach(li => { const s = li.querySelector('small'); if (s) s.textContent = ago(+li.dataset.t); }); }, 1000);
 
 // ---------------------------------------------------------------- painting the panels
 const hue = s => { let h = 0; s = String(s || ''); for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0; return h % 360; };
@@ -265,7 +295,8 @@ on('wallet', () => renderTool());
 // ---------------------------------------------------------------- boot
 paintCA(); renderTool(); onScroll();
 setTimeout(() => wallet.restore(), 600);
-const hide = () => { $('#intro').classList.add('done'); document.body.classList.remove('loading'); };
+if (world && fNow < .2) world.hold();
+const hide = () => { $('#intro').classList.add('done'); document.body.classList.remove('loading'); if (world) setTimeout(() => world.intro(), 150); };
 document.body.classList.add('loading');
 Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 1800))]).then(() => setTimeout(hide, 900));
 loadGems(); loadTrending(); loadWhales(); pumpStream();
