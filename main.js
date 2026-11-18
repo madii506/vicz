@@ -1,5 +1,5 @@
 // VICZ · the page: live pump.fun data in, the world and the panels out. Scrolling digs the camera down through the trenches.
-import { createWorld } from './world.js';
+import { createWorld } from './world.js?v=2';
 import * as api from './api.js';
 import { CONFIG, $, $$, esc, short, usd, pct, cls, img, ago, toast, copy, sol, solscan, on, store } from './core.js';
 import * as wallet from './wallet.js';
@@ -173,10 +173,10 @@ const streamShown = new Set();
 function addStream(t) {
   const ul = $('#stream'); if (!ul) return; const em = ul.querySelector('.empty'); if (em) em.remove();
   if (streamShown.has(t.mint)) return; streamShown.add(t.mint);
-  const li = document.createElement('li'); li.dataset.m = t.mint; li.innerHTML = `${av(t)}<span><b>$${esc(t.symbol)}</b> <small>${esc((t.name || '').slice(0, 24))}</small></span><small>${ago(t.created)}</small>`;
+  const li = document.createElement('li'); li.dataset.m = t.mint; li.innerHTML = `${av(t)}<span><b>$${esc(t.symbol)}</b> <small>${esc((t.name || '').slice(0, 24))}</small></span><small class="t">${ago(t.created)}</small>`;
   ul.prepend(li); while (ul.children.length > 9) ul.lastElementChild.remove();
 }
-function paintStream() { if (!launches.length && F.new.length) for (const t of F.new.slice(0, 8).reverse()) addStream(t); $$('#stream li[data-m]').forEach(li => { const t = findCoin(li.dataset.m); const s = li.querySelector('small:last-child'); if (t && s) s.textContent = ago(t.created); }); }
+function paintStream() { if (!launches.length && F.new.length) for (const t of F.new.slice(0, 8).reverse()) addStream(t); $$('#stream li[data-m]').forEach(li => { const t = findCoin(li.dataset.m); const s = li.querySelector('.t'); if (t && s) s.textContent = ago(t.created); }); }
 let tab = 'hot';
 function paintBoard() {
   const L = (F[tab] || []).slice(0, 30), tb = $('#board tbody');
