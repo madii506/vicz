@@ -1,5 +1,5 @@
 // VICZ · the page: live pump.fun data in, the world and the panels out. Scrolling digs the camera down through the trenches.
-import { createWorld } from './world.js?v=2';
+import { createWorld } from './world.js?v=3';
 import * as api from './api.js';
 import { CONFIG, $, $$, esc, short, usd, pct, cls, img, ago, toast, copy, sol, solscan, on, store } from './core.js';
 import * as wallet from './wallet.js';
@@ -24,7 +24,7 @@ function stationFromScroll() {
 const navA = $$('.links a'), depthLi = $$('#depth li');
 function onScroll() {
   const f = stationFromScroll(); fNow = f; if (world) world.setF(f);
-  document.body.classList.toggle('night', f > .8);
+  document.body.classList.toggle('night', f > .8); document.body.classList.toggle('atTop', f < .45);
   const k = f / (N - 1); $('.dfill').style.height = k * 100 + '%'; $('.dknob').style.top = k * 100 + '%';
   const i = Math.floor(f), e = f - i, d = STY[i] + (STY[Math.min(N - 1, i + 1)] - STY[i]) * e; $('#depthNow').textContent = (d > 0 ? '+' : '') + Math.round(d);
   const cur = Math.round(f); navA.forEach(a => a.classList.toggle('on', +a.dataset.st === cur)); depthLi.forEach(l => l.classList.toggle('on', +l.dataset.st <= f + .5));
@@ -202,7 +202,7 @@ function openCard(c) {
 // ---------------------------------------------------------------- the CA, once $VICZ is live
 function paintCA() {
   const pill = ca => `<code>${short(ca)}</code><button data-copy="${ca}">Copy</button><a href="https://pump.fun/coin/${ca}" target="_blank" rel="noopener">Buy</a><a href="https://dexscreener.com/solana/${ca}" target="_blank" rel="noopener">Chart</a>${CONFIG.x ? `<a href="${esc(CONFIG.x)}" target="_blank" rel="noopener">𝕏</a>` : ''}`;
-  if (CONFIG.ca) { $('#caHero').innerHTML = pill(CONFIG.ca); $('#caHero').hidden = false; $('#caHQ').innerHTML = pill(CONFIG.ca); }
+  if (CONFIG.ca) $('#caHQ').innerHTML = pill(CONFIG.ca);
   else $('#caHQ').innerHTML = `<span class="soon">The CA lands here at launch.</span>${CONFIG.x ? `<a href="${esc(CONFIG.x)}" target="_blank" rel="noopener">Follow on 𝕏</a>` : ''}`;
   $$('[data-copy]').forEach(b => b.onclick = () => copy(b.dataset.copy));
   const nx = $('#navX'); if (CONFIG.x) { nx.href = CONFIG.x; nx.target = '_blank'; nx.rel = 'noopener'; }

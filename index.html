@@ -21,7 +21,7 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=1">
 <link rel="preload" href="/anton.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/inter.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/vicz.css?v=1">
+<link rel="stylesheet" href="/vicz.css?v=2">
 </head>
 <body>
 <canvas id="world" aria-label="The VICZ trenches, live"></canvas>
@@ -50,21 +50,9 @@
 
 <main id="page">
   <!-- 0 · the sky over Vice -->
-  <section class="sec hero" id="top" data-st="0">
-    <div class="hero-in">
-      <p class="kicker live"><i class="dot"></i>LIVE FROM THE TRENCHES</p>
-      <h1 class="chrome" data-t="VICZ"><span>VICZ</span></h1>
-      <p class="hook">The first in-game trenches for memecoins.</p>
-      <p class="sub">A 3D city at war, built from the live pump.fun board. Every soldier down there is a real coin.</p>
-      <div class="cta"><a class="btn pri big" href="#war">Enter the trenches</a><a class="btn ghost big" href="#fallen">Bring your fallen home</a></div>
-      <div class="capill" id="caHero" hidden></div>
-      <dl class="hstats">
-        <div><dt>launches / min</dt><dd data-live="perMin">—</dd></div>
-        <div><dt>on the line</dt><dd data-live="line">—</dd></div>
-        <div><dt>next over the top</dt><dd data-live="next">—</dd></div>
-      </dl>
-    </div>
-    <div class="cue" aria-hidden="true"><span>scroll to dig in</span><i></i></div>
+  <section class="sec hero" id="top" data-st="0" aria-label="VICZ: the first in-game trenches for memecoins">
+    <h1 class="sr">VICZ: the first in-game trenches for memecoins</h1>
+    <a class="cue" href="#war" aria-label="Scroll into the trenches"><i></i></a>
     <div class="tape" aria-label="Coins on the line right now"><div class="tape-in" id="tape"></div></div>
   </section>
 
@@ -74,6 +62,11 @@
       <p class="kicker">01 — VICE WENT TO WAR</p>
       <h2>The sun goes down.<br>The war starts.</h2>
       <p>Flares hang over the city, tracers cut the sky, and the two choppers circling the line are flown by real pump.fun whales. Every label is their live wallet.</p>
+      <dl class="hstats">
+        <div><dt>launches / min</dt><dd data-live="perMin">—</dd></div>
+        <div><dt>on the line</dt><dd data-live="line">—</dd></div>
+        <div><dt>next over the top</dt><dd data-live="next">—</dd></div>
+      </dl>
       <div class="whales" id="whales"><p class="empty">Reading the whales' wallets…</p></div>
     </div>
   </section>
@@ -162,6 +155,6 @@
 
 <div id="card" class="card" hidden></div>
 <div id="toasts" aria-live="polite"></div>
-<script type="module" src="/main.js?v=2"></script>
+<script type="module" src="/main.js?v=3"></script>
 </body>
 </html>
