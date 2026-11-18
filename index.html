@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>VICZ</title>
+<meta name="description" content="The first in-game trenches for memecoins. A 3D city at war, built from the live pump.fun board: every soldier is a real coin.">
+<meta name="theme-color" content="#1ac4e6">
+<meta property="og:type" content="website">
+<meta property="og:title" content="VICZ">
+<meta property="og:description" content="The first in-game trenches for memecoins. Every pump.fun coin is a soldier. Pumps fire, dumps get shelled, graduates go over the top.">
+<meta property="og:image" content="/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="VICZ">
+<meta name="twitter:description" content="The first in-game trenches for memecoins.">
+<meta name="twitter:image" content="/og.png">
+<link rel="icon" type="image/png" sizes="64x64" href="/favicon-64.png?v=1">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png?v=1">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=1">
+<link rel="preload" href="/anton.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/inter.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/vicz.css?v=1">
+</head>
+<body>
+<canvas id="world" aria-label="The VICZ trenches, live"></canvas>
+<div id="haze" aria-hidden="true"></div>
+
+<div id="intro" aria-hidden="true">
+  <div class="intro-mark"><i class="isun"></i><img src="/mark.png" alt=""></div>
+</div>
+
+<header id="nav">
+  <a class="brand" href="#top" aria-label="VICZ, back to the top"><img src="/favicon-64.png?v=1" alt=""><b>VICZ</b></a>
+  <nav class="links" aria-label="Sections">
+    <a href="#line" data-st="2">The line</a><a href="#over" data-st="3">Over the top</a><a href="#barracks" data-st="4">Barracks</a><a href="#room" data-st="5">War room</a><a href="#fallen" data-st="6">The fallen</a><a href="#hq" data-st="7">HQ</a>
+  </nav>
+  <div class="right"><a class="xbtn" id="navX" href="#hq" aria-label="VICZ on X">𝕏</a><a class="btn sm pri" href="#fallen">Bring your fallen home</a></div>
+</header>
+
+<aside id="depth" aria-hidden="true">
+  <div class="dtrack"><i class="dfill"></i><i class="dknob"></i></div>
+  <ol>
+    <li data-st="0"><b>SKY</b></li><li data-st="2"><b>THE LINE</b><span>0 m</span></li><li data-st="4"><b>BARRACKS</b><span>-15 m</span></li>
+    <li data-st="5"><b>WAR ROOM</b><span>-30 m</span></li><li data-st="6"><b>THE FALLEN</b><span>-48 m</span></li><li data-st="7"><b>HQ</b><span>-67 m</span></li>
+  </ol>
+  <p class="dnow"><b id="depthNow">+24</b> m</p>
+</aside>
+
+<main id="page">
+  <!-- 0 · the sky over Vice -->
+  <section class="sec hero" id="top" data-st="0">
+    <div class="hero-in">
+      <p class="kicker live"><i class="dot"></i>LIVE FROM THE TRENCHES</p>
+      <h1 class="chrome" data-t="VICZ"><span>VICZ</span></h1>
+      <p class="hook">The first in-game trenches for memecoins.</p>
+      <p class="sub">A 3D city at war, built from the live pump.fun board. Every soldier down there is a real coin.</p>
+      <div class="cta"><a class="btn pri big" href="#war">Enter the trenches</a><a class="btn ghost big" href="#fallen">Bring your fallen home</a></div>
+      <div class="capill" id="caHero" hidden></div>
+      <dl class="hstats">
+        <div><dt>launches / min</dt><dd data-live="perMin">—</dd></div>
+        <div><dt>on the line</dt><dd data-live="line">—</dd></div>
+        <div><dt>next over the top</dt><dd data-live="next">—</dd></div>
+      </dl>
+    </div>
+    <div class="cue" aria-hidden="true"><span>scroll to dig in</span><i></i></div>
+    <div class="tape" aria-label="Coins on the line right now"><div class="tape-in" id="tape"></div></div>
+  </section>
+
+  <!-- 1 · the city at war -->
+  <section class="sec" id="war" data-st="1">
+    <div class="panel light">
+      <p class="kicker">01 — VICE WENT TO WAR</p>
+      <h2>The sun goes down.<br>The war starts.</h2>
+      <p>Flares hang over the city, tracers cut the sky, and the two choppers circling the line are flown by real pump.fun whales. Every label is their live wallet.</p>
+      <div class="whales" id="whales"><p class="empty">Reading the whales' wallets…</p></div>
+    </div>
+  </section>
+
+  <!-- 2 · the front line -->
+  <section class="sec" id="line" data-st="2">
+    <div class="panel">
+      <p class="kicker">02 — THE FRONT LINE</p>
+      <h2>Every coin is a soldier.</h2>
+      <p>The hottest pump.fun coins walk the trench in their own logos. <b class="g">Pump</b> and they fire a rocket. <b class="r">Dump hard</b> and they get shelled.</p>
+      <div class="mood" id="mood"><span>dumping</span><i><b></b></i><span>pumping</span></div>
+      <ol class="roll" id="roll"><li class="empty">Calling the line…</li></ol>
+      <p class="fine">5-minute move from Jupiter's live trending board. Tap a soldier's tag to open its card.</p>
+    </div>
+  </section>
+
+  <!-- 3 · over the top -->
+  <section class="sec" id="over" data-st="3">
+    <div class="panel">
+      <p class="kicker">03 — OVER THE TOP</p>
+      <h2>Graduate and you go over the top.</h2>
+      <p>When a coin fills its bonding curve it climbs out of the trench and charges across no man's land to the PumpSwap bunker. Live graduations go first.</p>
+      <h3>Over the top</h3>
+      <ol class="roll" id="grads"><li class="empty">Watching the curve…</li></ol>
+      <h3>Next up the ladder</h3>
+      <div class="bonds" id="bonds"></div>
+    </div>
+  </section>
+
+  <!-- 4 · the barracks -->
+  <section class="sec" id="barracks" data-st="4">
+    <div class="panel">
+      <p class="kicker">04 — THE BARRACKS</p>
+      <h2>New recruits, every few seconds.</h2>
+      <p>Every new pump.fun launch enlists down here, gets its helmet and rides the lift up to the line.</p>
+      <div class="bignum"><b id="perMin">—</b><span>launches in the last minute</span></div>
+      <ul class="stream" id="stream"><li class="empty">Opening the recruiting office…</li></ul>
+    </div>
+  </section>
+
+  <!-- 5 · the war room -->
+  <section class="sec wide" id="room" data-st="5">
+    <div class="panel">
+      <p class="kicker">05 — THE WAR ROOM</p>
+      <h2>The whole front, live.</h2>
+      <div class="tabs" role="tablist" id="tabs">
+        <button role="tab" aria-selected="true" data-tab="hot">On the line</button><button role="tab" data-tab="new">Recruits</button><button role="tab" data-tab="migrated">Over the top</button><button role="tab" data-tab="bonding">Next up</button>
+      </div>
+      <div class="boardwrap"><table class="board" id="board"><thead><tr><th>Coin</th><th>5m</th><th>1h</th><th>Mcap</th><th>Holders</th><th></th></tr></thead><tbody><tr><td colspan="6" class="empty">Loading the board…</td></tr></tbody></table></div>
+    </div>
+  </section>
+
+  <!-- 6 · the fallen -->
+  <section class="sec right" id="fallen" data-st="6">
+    <div class="panel">
+      <p class="kicker">06 — THE FALLEN</p>
+      <h2>Bring your fallen home.</h2>
+      <p>Every dead coin in your wallet still holds about <b>0.002 SOL</b> of rent in its token account. VICZ finds them, closes them, and that SOL comes back to you.</p>
+      <div class="tool" id="tool"></div>
+      <ul class="safe">
+        <li>You sign every transaction in your own wallet. VICZ never holds or sees a key.</li>
+        <li>Nothing worth $1 or more, no NFT and no stablecoin is ever touched.</li>
+        <li>Dust is only burned when you pick it. Empty accounts are just closed.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 7 · HQ -->
+  <section class="sec hq" id="hq" data-st="7">
+    <div class="panel">
+      <p class="kicker">07 — HQ</p>
+      <h2 class="chrome sm" data-t="$VICZ"><span>$VICZ</span></h2>
+      <p>The first in-game trenches for memecoins. Built for the week Vice gets loud.</p>
+      <div class="capill" id="caHQ"></div>
+      <div class="faq" id="faq">
+        <details><summary>What is VICZ?</summary><p>A 3D world built from the live pump.fun board. The hottest coins walk the trench as soldiers, new launches enlist in the barracks, and every graduation climbs out and charges the PumpSwap bunker.</p></details>
+        <details><summary>Is the data real?</summary><p>Yes. Coins and moves come from Jupiter's public data, launches and graduations from PumpPortal's live stream, and the whales from their public wallets on Solana. When a feed is down, the world says so instead of making numbers up.</p></details>
+        <details><summary>What does bring your fallen home do?</summary><p>It closes the empty token accounts your dead coins left in your wallet and returns the rent locked in each one, about 0.002 SOL. You see every account and the SOL before you sign. Nothing worth $1 or more is touched.</p></details>
+        <details><summary>Does VICZ hold my keys?</summary><p>Never. Your wallet builds nothing and VICZ sends nothing without your signature. The site makes unsigned transactions, your wallet shows and signs them.</p></details>
+        <details><summary>Is this connected to GTA?</summary><p>No. VICZ is an independent fan-made world. It is not affiliated with Rockstar Games or Take-Two Interactive.</p></details>
+      </div>
+      <p class="fine">Not financial advice. Memecoins are volatile and can go to zero.</p>
+    </div>
+  </section>
+</main>
+
+<div id="card" class="card" hidden></div>
+<div id="toasts" aria-live="polite"></div>
+<script type="module" src="/main.js?v=1"></script>
+</body>
+</html>

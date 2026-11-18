@@ -1,0 +1,6 @@
+{
+  "name": "vicz",
+  "private": true,
+  "description": "VICZ: the first in-game trenches for memecoins",
+  "engines": { "node": "22.x" }
+}
